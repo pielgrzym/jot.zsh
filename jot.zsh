@@ -4,7 +4,7 @@ JOTDIR=$HOME/.jots
 JOTTEMPDIR=$HOME/.jots-temp
 
 jot(){
-        TMPFILE="$(mktemp -t jot_zsh)"
+        TMPFILE="$(mktemp -t tempjot.XXXXXX.zsh)"
         vim $TMPFILE
         trap "rm -f '$TMPFILE'" 0
         echo -n "Jotfile name: "
@@ -16,10 +16,11 @@ jot(){
         if [[ $name != "" ]]; then
                 jotpath=$JOTDIR/$name
                 mv $TMPFILE $jotpath
-                source $jotpath
         else
-                echo "No name given"
-                exit 1
+                tempname=$(basename "$TMPFILE")
+                echo "No name given. Using $tempname"
+                jotpath=$JOTDIR/$tempname
         fi
         
+        source $jotpath
 }
